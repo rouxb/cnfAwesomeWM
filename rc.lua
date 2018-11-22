@@ -249,13 +249,13 @@ globalkeys = my_table.join(
               {description = "view  previous nonempty", group = "tag"}),
 
     -- Default client focus
-    awful.key({ altkey,           }, "j",
+    awful.key({ modkey,           }, "c",
         function ()
             awful.client.focus.byidx( 1)
         end,
         {description = "focus next by index", group = "client"}
     ),
-    awful.key({ altkey,           }, "k",
+    awful.key({ modkey,           }, "t",
         function ()
             awful.client.focus.byidx(-1)
         end,
@@ -263,41 +263,41 @@ globalkeys = my_table.join(
     ),
 
     -- By direction client focus
-    awful.key({ modkey }, "j",
-        function()
-            awful.client.focus.global_bydirection("down")
-            if client.focus then client.focus:raise() end
-        end,
-        {description = "focus down", group = "client"}),
-    awful.key({ modkey }, "k",
-        function()
-            awful.client.focus.global_bydirection("up")
-            if client.focus then client.focus:raise() end
-        end,
-        {description = "focus up", group = "client"}),
-    awful.key({ modkey }, "h",
-        function()
-            awful.client.focus.global_bydirection("left")
-            if client.focus then client.focus:raise() end
-        end,
-        {description = "focus left", group = "client"}),
-    awful.key({ modkey }, "l",
-        function()
-            awful.client.focus.global_bydirection("right")
-            if client.focus then client.focus:raise() end
-        end,
-        {description = "focus right", group = "client"}),
+    -- awful.key({ modkey }, "j",
+    --     function()
+    --         awful.client.focus.global_bydirection("down")
+    --         if client.focus then client.focus:raise() end
+    --     end,
+    --     {description = "focus down", group = "client"}),
+    -- awful.key({ modkey }, "k",
+    --     function()
+    --         awful.client.focus.global_bydirection("up")
+    --         if client.focus then client.focus:raise() end
+    --     end,
+    --     {description = "focus up", group = "client"}),
+    -- awful.key({ modkey }, "h",
+    --     function()
+    --         awful.client.focus.global_bydirection("left")
+    --         if client.focus then client.focus:raise() end
+    --     end,
+    --     {description = "focus left", group = "client"}),
+    -- awful.key({ modkey }, "l",
+    --     function()
+    --         awful.client.focus.global_bydirection("right")
+    --         if client.focus then client.focus:raise() end
+    --     end,
+    --     {description = "focus right", group = "client"}),
     awful.key({ modkey,           }, "w", function () awful.util.mymainmenu:show() end,
               {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
-    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
+    awful.key({ modkey, "Shift"   }, "c", function () awful.client.swap.byidx(  1)    end,
               {description = "swap with next client by index", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
+    awful.key({ modkey, "Shift"   }, "t", function () awful.client.swap.byidx( -1)    end,
               {description = "swap with previous client by index", group = "client"}),
-    awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end,
+    awful.key({ modkey, "Control" }, "c", function () awful.screen.focus_relative( 1) end,
               {description = "focus the next screen", group = "screen"}),
-    awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end,
+    awful.key({ modkey, "Control" }, "t", function () awful.screen.focus_relative(-1) end,
               {description = "focus the previous screen", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
@@ -328,8 +328,8 @@ globalkeys = my_table.join(
               {description = "decrement useless gaps", group = "tag"}),
 
     -- Dynamic tagging
-    awful.key({ modkey, "Shift" }, "n", function () lain.util.add_tag() end,
-              {description = "add new tag", group = "tag"}),
+    awful.key({ modkey, "Shift" }, "i", function () lain.util.add_tag() end,
+              {description = "insert new tag", group = "tag"}),
     awful.key({ modkey, "Shift" }, "r", function () lain.util.rename_tag() end,
               {description = "rename tag", group = "tag"}),
     awful.key({ modkey, "Shift" }, "Left", function () lain.util.move_tag(-1) end,
@@ -347,17 +347,17 @@ globalkeys = my_table.join(
     awful.key({ modkey, "Shift"   }, "q", awesome.quit,
               {description = "quit awesome", group = "awesome"}),
 
-    awful.key({ altkey, "Shift"   }, "l",     function () awful.tag.incmwfact( 0.05)          end,
+    awful.key({ altkey, "Shift"   }, "n",     function () awful.tag.incmwfact( 0.05)          end,
               {description = "increase master width factor", group = "layout"}),
     awful.key({ altkey, "Shift"   }, "h",     function () awful.tag.incmwfact(-0.05)          end,
               {description = "decrease master width factor", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1, nil, true) end,
+    awful.key({ modkey, "Shift"   }, "n",     function () awful.tag.incnmaster( 1, nil, true) end,
               {description = "increase the number of master clients", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1, nil, true) end,
+    awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster(-1, nil, true) end,
               {description = "decrease the number of master clients", group = "layout"}),
-    awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1, nil, true)    end,
+    awful.key({ modkey, "Control" }, "n",     function () awful.tag.incncol( 1, nil, true)    end,
               {description = "increase the number of columns", group = "layout"}),
-    awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)    end,
+    awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol(-1, nil, true)    end,
               {description = "decrease the number of columns", group = "layout"}),
     awful.key({ modkey,           }, "space", function () awful.layout.inc( 1)                end,
               {description = "select next", group = "layout"}),
@@ -465,17 +465,17 @@ globalkeys = my_table.join(
         {description = "mpc on/off", group = "widgets"}),
 
     -- Copy primary to clipboard (terminals to gtk)
-    awful.key({ modkey }, "c", function () awful.spawn.with_shell("xsel | xsel -i -b") end,
+    awful.key({ altkey }, "c", function () awful.spawn.with_shell("xsel | xsel -i -b") end,
               {description = "copy terminal to gtk", group = "hotkeys"}),
     -- Copy clipboard to primary (gtk to terminals)
     awful.key({ modkey }, "v", function () awful.spawn.with_shell("xsel -b | xsel") end,
               {description = "copy gtk to terminal", group = "hotkeys"}),
 
-    -- User programs
-    awful.key({ modkey }, "q", function () awful.spawn(browser) end,
-              {description = "run browser", group = "launcher"}),
-    awful.key({ modkey }, "a", function () awful.spawn(gui_editor) end,
-              {description = "run gui editor", group = "launcher"}),
+    -- User programs TODO with emacs like keys => redflat
+    -- awful.key({ modkey }, "q", function () awful.spawn(browser) end,
+    --           {description = "run browser", group = "launcher"}),
+    -- awful.key({ modkey }, "a", function () awful.spawn(gui_editor) end,
+    --           {description = "run gui editor", group = "launcher"}),
 
     -- Default
     --[[ Menubar
@@ -515,7 +515,7 @@ clientkeys = my_table.join(
             c:raise()
         end,
         {description = "toggle fullscreen", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
+    awful.key({ modkey, "Shift"   }, "l",      function (c) c:kill()                         end,
               {description = "close", group = "client"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
               {description = "toggle floating", group = "client"}),
@@ -523,7 +523,7 @@ clientkeys = my_table.join(
               {description = "move to master", group = "client"}),
     awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
               {description = "move to screen", group = "client"}),
-    awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
+    awful.key({ altkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
               {description = "toggle keep on top", group = "client"}),
     awful.key({ modkey,           }, "n",
         function (c)
