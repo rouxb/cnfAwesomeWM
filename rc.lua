@@ -18,7 +18,7 @@ local naughty       = require("naughty")
 local lain          = require("lain")
 --local menubar       = require("menubar")
 local freedesktop   = require("freedesktop")
--- local redflat       = require("redflat")
+local redflat       = require("redflat")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
                       require("awful.hotkeys_popup.keys")
 local my_table      = awful.util.table or gears.table -- 4.{0,1} compatibility
@@ -176,6 +176,45 @@ awful.util.tasklist_buttons = my_table.join(
     awful.button({ }, 5, function () awful.client.focus.byidx(-1) end)
 )
 beautiful.init(string.format("%s/.config/awesome/themes/theme.lua", os.getenv("HOME")))
+-- }}}
+
+-- Emacs like programs key {{{
+local keyseq = { { modkey }, "l", {}}
+keyseq[3] = {
+  -- second and last key in sequence, full description and action is necessary
+  {
+    {}, "w", function () awful.spawn(browser) end,
+    { description = "launch web browser", group = "Apps launcher" }
+  },
+  {
+    {}, "m", function () awful.spawn(mail) end,
+    { description = "launch mail client", group = "Apps launcher" }
+  },
+  {
+    {}, "c", function () awful.spawn(chat) end,
+    { description = "launch chat client", group = "Apps launcher" }
+  },
+  {
+    {}, "v", function () awful.spawn(pdf) end,
+    { description = "launch pdf viewer", group = "Apps launcher" }
+  },
+  {
+    {}, "f", function () awful.spawn(fm) end,
+    { description = "launch file manager", group = "Apps launcher" }
+  },
+  {
+    {}, "e", function () awful.spawn(gui_editor) end,
+    { description = "launch editor", group = "Apps launcher" }
+  },
+  {
+    {}, "d", function () awful.spawn(dmenu) end,
+    { description = "launch dmenu", group = "Apps launcher" }
+  },
+  {
+    {}, "s", function () awful.spawn(schema) end,
+    { description = "launch shematic editor", group = "Apps launcher" }
+  },
+}
 -- }}}
 
 -- {{{ Menu
@@ -463,8 +502,9 @@ globalkeys = my_table.join(
     awful.key({ altkey }, "v", function () awful.spawn.with_shell("xsel -b | xsel") end,
               {description = "copy gtk to terminal", group = "hotkeys"}),
 
-    -- User programs TODO with emacs like keys => redflat
-    -- awful.key({ modkey }, "l", function() redflat.float.keychain:activate(keyseq, "Apps") end,
+    -- User programs emacs like keys seq
+    awful.key({ modkey }, "l", function() redflat.float.keychain:activate(keyseq, "Apps") end,
+              {description = "Enable emacs-like keysequence", group = "hotkeys"}),
 
     -- awful.key({ modkey }, "q", function () awful.spawn(browser) end,
     --           {description = "run browser", group = "launcher"}),
@@ -499,44 +539,6 @@ globalkeys = my_table.join(
               {description = "lua execute prompt", group = "awesome"})
     --]]
 )
--- -- Emacs like programs key {{{
--- local keyseq = { { env.mod }, "l", {}}
--- keyseq[3] = {
---   -- second and last key in sequence, full description and action is necessary
---   {
---     {}, "w", function () awful.spawn.(browser) end,
---     { description = "launch web browser", group = "Apps launcher" }
---   },
---   {
---     {}, "m", function () awful.spawn.(mail) end,
---     { description = "launch mail client", group = "Apps launcher" }
---   },
---   {
---     {}, "c", function () awful.spawn.(chat) end,
---     { description = "launch chat client", group = "Apps launcher" }
---   },
---   {
---     {}, "v", function () awful.spawn(pdf) end,
---     { description = "launch pdf viewer", group = "Apps launcher" }
---   },
---   {
---     {}, "f", function () awful.spawn(fm) end,
---     { description = "launch file manager", group = "Apps launcher" }
---   },
---   {
---     {}, "e", function () awful.spawn(gui_editor) end,
---     { description = "launch editor", group = "Apps launcher" }
---   },
---   {
---     {}, "d", function () awful.spawn(dmenu) end,
---     { description = "launch dmenu", group = "Apps launcher" }
---   },
---   {
---     {}, "s", function () awful.spawn(schema) end,
---     { description = "launch shematic editor", group = "Apps launcher" }
---   },
--- }
--- -- }}}
 
 clientkeys = my_table.join(
     awful.key({ modkey,           }, "m",      lain.util.magnify_client,
@@ -628,6 +630,7 @@ clientbuttons = gears.table.join(
 
 -- Set keys
 root.keys(globalkeys)
+
 -- }}}
 
 -- {{{ Rules

@@ -6,3 +6,7 @@
 	path = lain
 	url = https://github.com/lcpz/lain
 	branch = master
+[submodule "redflat"]
+	path = redflat
+  url = https://github.com/rouxb/redflat
+  branch = master
