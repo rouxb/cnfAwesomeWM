@@ -264,8 +264,61 @@ theme.mpd = lain.widget.mpd({
 local spr     = wibox.widget.textbox(' ')
 local arrl_dl = separators.arrow_left(theme.bg_focus, "alpha")
 local arrl_ld = separators.arrow_left("alpha", theme.bg_focus)
- 
-function theme.at_screen_connect(s)
+
+local dockshape = function(cr, width, height)
+    gears.shape.partially_rounded_rect(cr, width, height, false, true, true, false, 6)
+end
+
+function theme.vertical_wibox(s) -- {{{
+    -- Create the vertical wibox
+    s.dockheight = (35 *  s.workarea.height)/100
+
+    s.mytaskwibox = wibox({ screen = s, x=0, y=s.workarea.height/2 - s.dockheight/2, width = 6, height = s.dockheight, fg = theme.fg_normal, bg = barcolor2, ontop = true, visible = true, type = "dock" })
+
+    if s.index > 1 and s.mytaskwibox.y == 0 then
+        s.mytaskwibox.y = screen[1].mytaskwibox.y
+    end
+
+    -- Add widgets to the vertical wibox
+    s.mytaskwibox:setup {
+        layout = wibox.layout.align.vertical,
+        {
+            layout = wibox.layout.fixed.vertical,
+            s.mytasklist,
+        },
+    }
+
+    -- Add toggling functionalities
+    s.docktimer = gears.timer{ timeout = 2 }
+    s.docktimer:connect_signal("timeout", function()
+        local s = awful.screen.focused()
+        s.mytaskwibox.width = 2
+        if s.docktimer.started then
+            s.docktimer:stop()
+        end
+    end)
+    tag.connect_signal("property::selected", function(t)
+        local s = t.screen or awful.screen.focused()
+        s.mytaskwibox.width = 38
+        gears.surface.apply_shape_bounding(s.mytaskwibox, dockshape)
+        if not s.docktimer.started then
+            s.docktimer:start()
+        end
+    end)
+
+    s.mytaskwibox:connect_signal("mouse::leave", function()
+        local s = awful.screen.focused()
+        s.mytaskwibox.width = 2
+    end)
+
+    s.mytaskwibox:connect_signal("mouse::enter", function()
+        local s = awful.screen.focused()
+        s.mytaskwibox.width = 38
+        gears.surface.apply_shape_bounding(s.mytaskwibox, dockshape)
+    end)
+end -- }}}
+
+function theme.at_screen_connect(s) -- {{{
     -- Quake application
     s.quake = lain.util.quake({ app = awful.util.terminal })
 
@@ -294,7 +347,9 @@ function theme.at_screen_connect(s)
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, awful.util.taglist_buttons)
 
     -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, awful.util.tasklist_buttons)
+    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, awful.util.tasklist_buttons, {
+        shape = gears.shape.rectangle,
+        spacing = 10}, nil, wibox.layout.fixed.vertical())
 
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s, height = 20, bg = theme.bg_normal, fg = theme.fg_normal })
@@ -309,8 +364,7 @@ function theme.at_screen_connect(s)
             s.mypromptbox,
             spr,
         },
-        s.mytasklist, -- Middle widget
-        -- nil,
+        nil,
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             wibox.widget.systray(),
@@ -351,6 +405,7 @@ function theme.at_screen_connect(s)
             wibox.container.background(s.mylayoutbox, theme.bg_focus),
         },
     }
-end
+    gears.timer.delayed_call(theme.vertical_wibox, s)
+end -- }}}
 
 return theme
