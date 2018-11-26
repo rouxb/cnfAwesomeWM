@@ -178,6 +178,34 @@ awful.util.tasklist_buttons = my_table.join(
 beautiful.init(string.format("%s/.config/awesome/themes/theme.lua", os.getenv("HOME")))
 -- }}}
 
+	-- Appswitcher {{{
+	------------------------------------------------------------
+	appswitcher_keys_move = {
+		{
+			{ modkey }, "a", function() redflat.float.appswitcher:switch() end,
+			{ description = "Select next app", group = "Navigation" }
+		},
+		{
+			{ modkey }, "o", function() redflat.float.appswitcher:switch({ reverse = true }) end,
+			{ description = "Select previous app", group = "Navigation" }
+		},
+	}
+
+	appswitcher_keys_action = {
+		{
+			{ modkey }, "Super_L", function() redflat.float.appswitcher:hide() end,
+			{ description = "Activate and exit", group = "Action" }
+		},
+		{
+			{}, "Escape", function() redflat.float.appswitcher:hide(true) end,
+			{ description = "Exit", group = "Action" }
+		},
+	}
+
+	redflat.float.appswitcher:set_keys(awful.util.table.join(redflat.float.appswitcher.keys.move, appswitcher_keys_move), "move")
+	redflat.float.appswitcher:set_keys(awful.util.table.join(redflat.float.appswitcher.keys.action, appswitcher_keys_action), "action")
+  -- }}}
+
 -- Emacs like programs key {{{
 local keyseq = { { modkey }, "l", {}}
 keyseq[3] = {
@@ -362,6 +390,13 @@ globalkeys = my_table.join(
               {description = "select previous", group = "layout"}),
     -- }}}
 
+  -- Appswitcher manipulation {{{
+    awful.key({ modkey,           }, "a", function () redflat.float.appswitcher:show({ filter = redflat.widget.tasklist.filter.currenttags }) end,
+              { description = "Switch to next with current tag", group = "Application switcher" }),
+    awful.key({ modkey, "Shift"   }, "a", function () redflat.float.appswitcher:show({ filter = redflat.widget.tasklist.filter.allscreen }) end,
+              { description = "Switch to next through all tag", group = "Application switcher" }),
+  -- }}}
+
     -- Show/Hide Wibox {{{ 
     awful.key({ modkey }, "b", function ()
             for s in screen do
@@ -524,7 +559,7 @@ globalkeys = my_table.join(
         {description = "show dmenu", group = "launcher"})
     --]]
     -- Prompt
-    awful.key({ modkey }, "r", function () awful.screen.focused().mypromptbox:run() end,
+    awful.key({ modkey }, "p", function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"}),
 
     awful.key({ modkey }, "x",
