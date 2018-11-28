@@ -15,7 +15,7 @@ local my_table = awful.util.table or gears.table -- 4.{0,1} compatibility
 
 local theme                                     = {}
 theme.confdir                                   = os.getenv("HOME") .. "/.config/awesome/themes/"
-theme.wallpaper                                 = theme.confdir .. "/wall.png"
+theme.wallpaper_path                            = os.getenv("HOME") .. "/.dropbox/wallpapers/"
 theme.font                                      = "xos4 Terminus 8"
 theme.fg_normal                                 = "#DDDDFF"
 theme.fg_focus                                  = "#EA6F81"
@@ -269,6 +269,24 @@ local dockshape = function(cr, width, height)
     gears.shape.partially_rounded_rect(cr, width, height, false, true, true, false, 6)
 end
 
+-- Wallpaper setup {{{
+theme.wallpaper = function(s)
+  -- Choose random wallpaper
+  math.randomseed(os.time())
+  pictures = assert(io.popen("ls " .. theme.wallpaper_path .. "/*.jpg"))
+  wallpaper = {}
+  for jpg in pictures:lines() do wallpaper[#wallpaper +1] = jpg end
+  trgt_wallpaper = wallpaper[math.random(1, #wallpaper)]
+
+  io.output(io.open("/tmp/awesome.txt", "a"))
+  io.write( "trgt wallpaper: " .. theme.wallpaper_path .. "  " .. trgt_wallpaper)
+  io.close()
+
+  -- Apply wallpaper
+  return trgt_wallpaper
+end
+-- }}}
+
 function theme.vertical_wibox(s) -- {{{
     -- Create the vertical wibox
     s.dockheight = (35 *  s.workarea.height)/100
@@ -351,6 +369,14 @@ function theme.at_screen_connect(s) -- {{{
         shape = gears.shape.rectangle,
         spacing = 10}, nil, wibox.layout.fixed.vertical())
 
+  -- s.mytasklist:buttons = awful.util.table.join(
+  -- awful.button({}, 1, redflat.widget.tasklist.action.select),
+  -- awful.button({}, 2, redflat.widget.tasklist.action.close),
+  -- awful.button({}, 3, redflat.widget.tasklist.action.menu),
+  -- awful.button({}, 4, redflat.widget.tasklist.action.switch_next),
+  -- awful.button({}, 5, redflat.widget.tasklist.action.switch_prev)
+  -- )
+
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s, height = 20, bg = theme.bg_normal, fg = theme.fg_normal })
 
@@ -367,13 +393,13 @@ function theme.at_screen_connect(s) -- {{{
         nil,
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
+            arrl_ld,
+            wibox.container.background(mpdicon, theme.bg_focus),
+            wibox.container.background(theme.mpd.widget, theme.bg_focus),
+            wibox.container.background(volicon, theme.bg_focus),
+            wibox.container.background(theme.volume.widget, theme.bg_focus),
+            arrl_dl,
             wibox.widget.systray(),
-            -- arrl_dl,
-            spr,
-            mpdicon,
-            theme.mpd.widget,
-            volicon,
-            theme.volume.widget,
             arrl_ld,
             -- mailicon,
             -- theme.mail.widget,
