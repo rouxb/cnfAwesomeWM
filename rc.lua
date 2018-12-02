@@ -213,6 +213,20 @@ beautiful.init(string.format("%s/.config/awesome/themes/theme.lua", os.getenv("H
 	redflat.float.appswitcher:set_keys(awful.util.table.join(redflat.float.appswitcher.keys.action, appswitcher_keys_action), "action")
   -- }}}
 
+-- Others functions {{{
+------------------------------------------------------------
+function kdbLayout(map)
+  if 'fr' == map then
+    awful.spawn.with_shell("setxkbmap -layout fr")
+  else -- Default to dvp
+    awful.spawn.with_shell("setxkbmap -layout us -variant dvp")
+    awful.spawn.with_shell("xmodmap -e \"keycode 94 = eacute egrave\"")
+    awful.spawn.with_shell("xmodmap -e \"clear lock\"")
+    awful.spawn.with_shell("xmodmap -e \"keycode 66 = Super_L agrave\"")
+  end
+  end
+-- }}}
+
 -- Emacs like programs key {{{
 local keyseq = { { modkey }, "l", {}}
 keyseq[3] = {
@@ -308,7 +322,7 @@ globalkeys = my_table.join(
               {description = "take a screenshot", group = "hotkeys"}),
 
     -- X screen locker
-    awful.key({ altkey, "Control" }, "l", function () os.execute(scrlocker) end,
+    awful.key({ altkey, "Control" }, "l", function () awful.spawn(scrlocker) awful.spawn.with_shell("sleep 1; xset dpms force off") end,
               {description = "lock screen", group = "hotkeys"}),
 
     -- Hotkeys
