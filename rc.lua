@@ -57,7 +57,14 @@ local function run_once(cmd_arr)
     end
 end
 
-run_once({ "urxvtd", "unclutter -root" }) -- entries must be separated by commas
+run_once({ "urxvtd", "unclutter -root",
+         "compton -b --config ~/.config/compton.conf ",
+         "setxkbmap -layout us -variant dvp",
+         "xmodmap -e \"keycode 94 = eacute egrave\"",
+         "xmodmap -e \"clear lock\"",
+         "xmodmap -e \"keycode 66 = Super_L agrave\"",
+         "xrandr --output DP-2 --rotate left",
+         "nm-applet"}) -- entries must be separated by commas
 
 -- This function implements the XDG autostart specification
 --[[
@@ -87,7 +94,7 @@ local shematic     = "dia"
 local dmenu        = "dmenu"
 
 awful.util.terminal = terminal
-awful.util.tagnames = { "1", "2", "3", "4", "5" }
+awful.util.tagnames = { "~", "%", "7", "5", "3", "1", "9", "0", "2" ,"4", "6", "web", "@" }
 awful.layout.layouts = {
     -- awful.layout.suit.floating,
     awful.layout.suit.tile,
@@ -491,45 +498,45 @@ globalkeys = my_table.join(
         {description = "volume 0%", group = "hotkeys"}),
     -- }}}
 
-    -- -- MPD control {{{
-    -- awful.key({ altkey, "Control" }, "Up",
-    --     function ()
-    --         os.execute("mpc toggle")
-    --         beautiful.mpd.update()
-    --     end,
-    --     {description = "mpc toggle", group = "widgets"}),
-    -- awful.key({ altkey, "Control" }, "Down",
-    --     function ()
-    --         os.execute("mpc stop")
-    --         beautiful.mpd.update()
-    --     end,
-    --     {description = "mpc stop", group = "widgets"}),
-    -- awful.key({ altkey, "Control" }, "Left",
-    --     function ()
-    --         os.execute("mpc prev")
-    --         beautiful.mpd.update()
-    --     end,
-    --     {description = "mpc prev", group = "widgets"}),
-    -- awful.key({ altkey, "Control" }, "Right",
-    --     function ()
-    --         os.execute("mpc next")
-    --         beautiful.mpd.update()
-    --     end,
-    --     {description = "mpc next", group = "widgets"}),
-    -- awful.key({ altkey }, "0",
-    --     function ()
-    --         local common = { text = "MPD widget ", position = "top_middle", timeout = 2 }
-    --         if beautiful.mpd.timer.started then
-    --             beautiful.mpd.timer:stop()
-    --             common.text = common.text .. lain.util.markup.bold("OFF")
-    --         else
-    --             beautiful.mpd.timer:start()
-    --             common.text = common.text .. lain.util.markup.bold("ON")
-    --         end
-    --         naughty.notify(common)
-    --     end,
-    --     {description = "mpc on/off", group = "widgets"}),
-    -- -- }}}
+    -- MPD control {{{
+    awful.key({ altkey, "Control" }, "Up",
+        function ()
+            os.execute("mpc toggle")
+            beautiful.mpd.update()
+        end,
+        {description = "mpc toggle", group = "widgets"}),
+    awful.key({ altkey, "Control" }, "Down",
+        function ()
+            os.execute("mpc stop")
+            beautiful.mpd.update()
+        end,
+        {description = "mpc stop", group = "widgets"}),
+    awful.key({ altkey, "Control" }, "Left",
+        function ()
+            os.execute("mpc prev")
+            beautiful.mpd.update()
+        end,
+        {description = "mpc prev", group = "widgets"}),
+    awful.key({ altkey, "Control" }, "Right",
+        function ()
+            os.execute("mpc next")
+            beautiful.mpd.update()
+        end,
+        {description = "mpc next", group = "widgets"}),
+    awful.key({ altkey }, "0",
+        function ()
+            local common = { text = "MPD widget ", position = "top_middle", timeout = 2 }
+            if beautiful.mpd.timer.started then
+                beautiful.mpd.timer:stop()
+                common.text = common.text .. lain.util.markup.bold("OFF")
+            else
+                beautiful.mpd.timer:start()
+                common.text = common.text .. lain.util.markup.bold("ON")
+            end
+            naughty.notify(common)
+        end,
+        {description = "mpc on/off", group = "widgets"}),
+    -- }}}
 
     -- Copy primary to clipboard (terminals to gtk)
     awful.key({ altkey }, "c", function () awful.spawn.with_shell("xsel | xsel -i -b") end,
@@ -619,16 +626,17 @@ clientkeys = my_table.join(
 -- Bind all key numbers to tags. {{{
 -- Be careful: we use keycodes to make it works on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
-for i = 1, 9 do
+local tagkeycode= {49, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21}
+for i,v in ipairs(tagkeycode) do
     -- Hack to only show tags 1 and 9 in the shortcut window (mod+s)
     local descr_view, descr_toggle, descr_move, descr_toggle_focus
-    if i == 1 or i == 9 then
+    if i == 2 or i == 10 then
         descr_view = {description = "view tag #", group = "tag"}
         descr_move = {description = "move focused client to tag #", group = "tag"}
     end
     globalkeys = my_table.join(globalkeys,
         -- View tag only.
-        awful.key({ modkey }, "#" .. i + 9,
+        awful.key({ modkey }, "#" .. v,
                   function ()
                         local screen = awful.screen.focused()
                         local tag = screen.tags[i]
@@ -638,7 +646,7 @@ for i = 1, 9 do
                   end,
                   descr_view),
         -- Move client to tag.
-        awful.key({ modkey, "Shift" }, "#" .. i + 9,
+        awful.key({ modkey, "Shift" }, "#" .. v,
                   function ()
                       if client.focus then
                           local tag = client.focus.screen.tags[i]
@@ -693,9 +701,9 @@ awful.rules.rules = {
       properties = { titlebars_enabled = false } },
 
     -- Position rules TODO
-    -- Set Firefox to always map on the first tag on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = awful.util.tagnames[1] } },
+    -- Set browser to always map on the first tag on screen 1.
+    { rule = { class = "Luakit" },
+      properties = { screen = 1, tag = awful.util.tagnames[12] } },
 
     -- { rule = { class = "Gimp", role = "gimp-image-window" },
     --       properties = { maximized = true } },
