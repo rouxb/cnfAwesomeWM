@@ -21,8 +21,9 @@ theme.fg_normal                                 = "#DDDDFF"
 theme.fg_focus                                  = "#EA6F81"
 theme.fg_urgent                                 = "#CC9393"
 theme.bg_normal                                 = "#1A1A1A"
-theme.bg_focus                                  = "#313131"
+theme.bg_focus                                  = "#064E71"
 theme.bg_urgent                                 = "#1A1A1A"
+theme.bg_airline                                = "#313131"
 theme.fg_minimize                               = "#ffffff"
 theme.border_width                              = 1
 theme.border_normal                             = "#1c2022"
@@ -54,7 +55,7 @@ theme.taglist_squares_sel                       = theme.confdir .. "/icons/squar
 theme.taglist_squares_unsel                     = theme.confdir .. "/icons/square_b.png"
 theme.tasklist_plain_task_name                  = true
 theme.tasklist_disable_icon                     = true
-theme.useless_gap                               = 0
+theme.useless_gap                               = 1
 theme.layout_tile                               = theme.confdir .. "/icons/tile.png"
 theme.layout_tilegaps                           = theme.confdir .. "/icons/tilegaps.png"
 theme.layout_tileleft                           = theme.confdir .. "/icons/tileleft.png"
@@ -262,8 +263,8 @@ theme.mpd = lain.widget.mpd({
 
 -- Separators
 local spr     = wibox.widget.textbox(' ')
-local arrl_dl = separators.arrow_left(theme.bg_focus, "alpha")
-local arrl_ld = separators.arrow_left("alpha", theme.bg_focus)
+local arrl_dl = separators.arrow_left(theme.bg_airline, "alpha")
+local arrl_ld = separators.arrow_left("alpha", theme.bg_airline)
 
 local dockshape = function(cr, width, height)
     gears.shape.partially_rounded_rect(cr, width, height, false, true, true, false, 6)
@@ -289,7 +290,7 @@ end
 
 function theme.vertical_wibox(s) -- {{{
     -- Create the vertical wibox
-    s.dockheight = (35 *  s.workarea.height)/100
+    s.dockheight = (50 *  s.workarea.height)/100
 
     s.mytaskwibox = wibox({ screen = s, x=0, y=s.workarea.height/2 - s.dockheight/2, width = 6, height = s.dockheight, fg = theme.fg_normal, bg = barcolor2, ontop = true, visible = true, type = "dock" })
 
@@ -336,6 +337,24 @@ function theme.vertical_wibox(s) -- {{{
     end)
 end -- }}}
 
+-- Globally manage tags
+tagSplit = {{1,{1, 2, 3, 4, 5, 6, 7}}, -- Define tag repartition in case of multiple screen
+            {2,{8, 9, 10, 11, 12}}}
+tagList = awful.tag(awful.util.tagnames, s, awful.layout.layouts)
+
+function theme.tag_dispatch(s) -- {{{
+  all_tags = root.tags()
+  if screen.count() > 1 then
+    for i,t_idx in pairs(tagSplit[s.index]) do
+      allTags[t_idx].screen = s
+    end
+  else
+    for i,t in pairs(all_tags) do
+        t.screen = s
+    end
+  end
+end -- }}}
+
 function theme.at_screen_connect(s) -- {{{
     -- Quake application
     s.quake = lain.util.quake({ app = awful.util.terminal })
@@ -348,7 +367,7 @@ function theme.at_screen_connect(s) -- {{{
     gears.wallpaper.maximized(wallpaper, s, true)
 
     -- Tags
-    awful.tag(awful.util.tagnames, s, awful.layout.layouts)
+    theme.tag_dispatch(s)
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -394,41 +413,41 @@ function theme.at_screen_connect(s) -- {{{
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             arrl_ld,
-            wibox.container.background(mpdicon, theme.bg_focus),
-            wibox.container.background(theme.mpd.widget, theme.bg_focus),
-            wibox.container.background(volicon, theme.bg_focus),
-            wibox.container.background(theme.volume.widget, theme.bg_focus),
+            wibox.container.background(mpdicon, theme.bg_airline),
+            wibox.container.background(theme.mpd.widget, theme.bg_airline),
+            wibox.container.background(volicon, theme.bg_airline),
+            wibox.container.background(theme.volume.widget, theme.bg_airline),
             arrl_dl,
             wibox.widget.systray(),
             arrl_ld,
             -- mailicon,
             -- theme.mail.widget,
             -- arrl_ld,
-            -- wibox.container.background(netdownicon, theme.bg_focus),
-            -- wibox.container.background(netdowninfo, theme.bg_focus),
-            -- wibox.container.background(netupicon, theme.bg_focus),
-            -- wibox.container.background(netupinfo.widget, theme.bg_focus),
+            -- wibox.container.background(netdownicon, theme.bg_airline),
+            -- wibox.container.background(netdowninfo, theme.bg_airline),
+            -- wibox.container.background(netupicon, theme.bg_airline),
+            -- wibox.container.background(netupinfo.widget, theme.bg_airline),
             -- arrl_dl,
-            wibox.container.background(memicon, theme.bg_focus),
-            wibox.container.background(memory.widget,theme.bg_focus),
-            wibox.container.background(cpuicon,theme.bg_focus),
-            wibox.container.background(cpu.widget,theme.bg_focus),
-            wibox.container.background(tempicon,theme.bg_focus),
-            wibox.container.background(temp.widget,theme.bg_focus),
+            wibox.container.background(memicon, theme.bg_airline),
+            wibox.container.background(memory.widget,theme.bg_airline),
+            wibox.container.background(cpuicon,theme.bg_airline),
+            wibox.container.background(cpu.widget,theme.bg_airline),
+            wibox.container.background(tempicon,theme.bg_airline),
+            wibox.container.background(temp.widget,theme.bg_airline),
             arrl_dl,
             baticon,
             bat.widget,
             --fsicon,
             --theme.fs.widget,
             arrl_ld,
-            wibox.container.background(weathericon, theme.bg_focus),
-            wibox.container.background(theme.weather.widget, theme.bg_focus),
+            wibox.container.background(weathericon, theme.bg_airline),
+            wibox.container.background(theme.weather.widget, theme.bg_airline),
             arrl_dl,
             clockicon,
             mytextclock,
             arrl_ld,
-            wibox.container.background(taskwarrior, theme.bg_focus),
-            wibox.container.background(s.mylayoutbox, theme.bg_focus),
+            wibox.container.background(taskwarrior, theme.bg_airline),
+            wibox.container.background(s.mylayoutbox, theme.bg_airline),
         },
     }
     gears.timer.delayed_call(theme.vertical_wibox, s)
