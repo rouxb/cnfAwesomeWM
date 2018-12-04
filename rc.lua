@@ -717,7 +717,7 @@ awful.rules.rules = {
     -- Position rules TODO
     -- Set browser to always map on the first tag on screen 1.
     { rule = { class = "Luakit" },
-      properties = { screen = 1, tag = awful.util.tagnames[12] } },
+      properties = { screen = 2, tag = awful.util.tagnames[12] } },
 
     -- { rule = { class = "Gimp", role = "gimp-image-window" },
     --       properties = { maximized = true } },

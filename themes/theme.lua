@@ -338,21 +338,25 @@ function theme.vertical_wibox(s) -- {{{
 end -- }}}
 
 -- Globally manage tags
-tagSplit = {{1,{1, 2, 3, 4, 5, 6, 7}}, -- Define tag repartition in case of multiple screen
-            {2,{8, 9, 10, 11, 12}}}
+tagSplit = {{1, 2, 3, 4, 5, 6, 7}, -- Define tag repartition in case of multiple screen
+            {8, 9, 10, 11, 12, 13}}
 tagList = awful.tag(awful.util.tagnames, s, awful.layout.layouts)
 
 function theme.tag_dispatch(s) -- {{{
+  -- io.output(io.open("/tmp/awesome_screen.txt", "a"))
   all_tags = root.tags()
   if screen.count() > 1 then
     for i,t_idx in pairs(tagSplit[s.index]) do
-      allTags[t_idx].screen = s
+      -- io.write("screen" .. s.index)
+      -- io.write(" => " .. i .. ";  " .. t_idx)
+      all_tags[t_idx].screen = s
     end
   else
     for i,t in pairs(all_tags) do
         t.screen = s
     end
   end
+  -- io.close()
 end -- }}}
 
 function theme.at_screen_connect(s) -- {{{
