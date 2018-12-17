@@ -81,7 +81,7 @@ awful.spawn.with_shell(
 -- {{{ Variable definitions
 local modkey       = "Mod4"
 local altkey       = "Mod1"
-local terminal     = "urxvtc"
+local terminal     = "urxvt256c-ml"
 local editor       = os.getenv("EDITOR") or "nvim"
 local gui_editor   = "nvim-gtk"
 local browser      = "luakit"
@@ -228,7 +228,7 @@ function kdbLayout(map)
 -- }}}
 
 -- Emacs like programs key {{{
-local keyseq = { { modkey }, "l", {}}
+local keyseq = { { modkey }, "s", {}}
 keyseq[3] = {
   -- second and last key in sequence, full description and action is necessary
   {
@@ -333,7 +333,7 @@ globalkeys = my_table.join(
               {description = "view previous nonempty", group = "tag"}),
     awful.key({ modkey,           }, "c", function () lain.util.tag_view_nonempty(1) end,
               {description = "view next nonempty", group = "tag"}),
-    awful.key({ modkey, "Shift"   }, "l", awful.tag.history.restore,
+    awful.key({ modkey,           }, "l", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
     -- Default client focus
@@ -560,7 +560,7 @@ globalkeys = my_table.join(
               {description = "copy gtk to terminal", group = "hotkeys"}),
 
     -- User programs emacs like keys seq
-    awful.key({ modkey }, "l", function() redflat.float.keychain:activate(keyseq, "Apps") end,
+    awful.key({ modkey }, "s", function() redflat.float.keychain:activate(keyseq, "Apps") end,
               {description = "Enable emacs-like keysequence", group = "hotkeys"}),
 
     -- awful.key({ modkey }, "q", function () awful.spawn(browser) end,
