@@ -652,18 +652,21 @@ for i,v in ipairs(tagkeycode) do
         -- View tag only.
         awful.key({ modkey }, "#" .. v,
                   function ()
+                        local all_tags = root.tags()
                         local screen = awful.screen.focused()
-                        local tag = screen.tags[i]
+                        local tag = all_tags[i]
                         if tag then
                            tag:view_only()
+                           awful.screen.focus(tag.screen)
                         end
                   end,
                   descr_view),
         -- Move client to tag.
         awful.key({ modkey, "Shift" }, "#" .. v,
                   function ()
+                      local all_tags = root.tags()
                       if client.focus then
-                          local tag = client.focus.screen.tags[i]
+                          local tag = all_tags[i]
                           if tag then
                               client.focus:move_to_tag(tag)
                           end
