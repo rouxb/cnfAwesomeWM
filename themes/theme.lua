@@ -302,13 +302,29 @@ function theme.tag_dispatch(s) -- {{{
       -- io.write(" => " .. i .. ";  " .. t_idx)
       all_tags[t_idx].screen = s
     end
+    all_tags[tagSplit[s.index][1]]:view_only()
   else
     for i,t in pairs(all_tags) do
         t.screen = s
     end
+    all_tags[1]:view_only()
   end
   -- io.close()
 end -- }}}
+
+tag.connect_signal("request::screen", function(t) -- {{{
+    -- Screen has disconnected, re-assign orphan tags to a live screen
+    -- Find a live screen
+    local live_screen = nil;
+    for s in screen do
+        if s ~= t.screen then
+            live_screen = s;
+            break
+        end
+    end
+    -- Move the orphaned tag to the live screen
+    t.screen = live_screen
+  end) -- }}}
 
 function theme.at_screen_connect(s) -- {{{
     -- Quake application
