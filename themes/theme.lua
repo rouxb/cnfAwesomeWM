@@ -385,18 +385,11 @@ function theme.at_screen_connect(s) -- {{{
             right = 10,
             widget = wibox.container.margin
         },
+        forced_width = 100,
         id     = 'background_role',
         widget = wibox.container.background,
     },
     } -- }}}
-
-  -- s.mytasklist:buttons = awful.util.table.join(
-  -- awful.button({}, 1, redflat.widget.tasklist.action.select),
-  -- awful.button({}, 2, redflat.widget.tasklist.action.close),
-  -- awful.button({}, 3, redflat.widget.tasklist.action.menu),
-  -- awful.button({}, 4, redflat.widget.tasklist.action.switch_next),
-  -- awful.button({}, 5, redflat.widget.tasklist.action.switch_prev)
-  -- )
 
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s, height = 20, bg = theme.bg_normal, fg = theme.fg_normal })
