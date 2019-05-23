@@ -288,55 +288,6 @@ theme.wallpaper = function(s)
 end
 -- }}}
 
-function theme.vertical_wibox(s) -- {{{
-    -- Create the vertical wibox
-    s.dockheight = (50 *  s.workarea.height)/100
-
-    s.mytaskwibox = wibox({ screen = s, x=0, y=s.workarea.height/2 - s.dockheight/2, width = 6, height = s.dockheight, fg = theme.fg_normal, bg = barcolor2, ontop = true, visible = true, type = "dock" })
-
-    if s.index > 1 and s.mytaskwibox.y == 0 then
-        s.mytaskwibox.y = screen[1].mytaskwibox.y
-    end
-
-    -- Add widgets to the vertical wibox
-    s.mytaskwibox:setup {
-        layout = wibox.layout.align.vertical,
-        {
-            layout = wibox.layout.fixed.vertical,
-            s.mytasklist,
-        },
-    }
-
-    -- Add toggling functionalities
-    s.docktimer = gears.timer{ timeout = 2 }
-    s.docktimer:connect_signal("timeout", function()
-        local s = awful.screen.focused()
-        s.mytaskwibox.width = 2
-        if s.docktimer.started then
-            s.docktimer:stop()
-        end
-    end)
-    tag.connect_signal("property::selected", function(t)
-        local s = t.screen or awful.screen.focused()
-        s.mytaskwibox.width = 38
-        gears.surface.apply_shape_bounding(s.mytaskwibox, dockshape)
-        if not s.docktimer.started then
-            s.docktimer:start()
-        end
-    end)
-
-    s.mytaskwibox:connect_signal("mouse::leave", function()
-        local s = awful.screen.focused()
-        s.mytaskwibox.width = 2
-    end)
-
-    s.mytaskwibox:connect_signal("mouse::enter", function()
-        local s = awful.screen.focused()
-        s.mytaskwibox.width = 38
-        gears.surface.apply_shape_bounding(s.mytaskwibox, dockshape)
-    end)
-end -- }}}
-
 -- Globally manage tags
 tagSplit = {{1, 2, 3, 4, 5, 6, 7}, -- Define tag repartition in case of multiple screen
             {8, 9, 10, 11, 12, 13}}
@@ -387,10 +338,57 @@ function theme.at_screen_connect(s) -- {{{
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, awful.util.taglist_buttons)
 
-    -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, awful.util.tasklist_buttons, {
-        shape = gears.shape.rectangle,
-        spacing = 10}, nil, wibox.layout.fixed.vertical())
+    -- Create a tasklist widget {{{
+    s.mytasklist = awful.widget.tasklist {
+    screen   = s,
+    filter   = awful.widget.tasklist.filter.currenttags,
+    buttons  = awful.util.tasklist_buttons,
+    style    = {
+        border_width = 1,
+        border_color = '#777777',
+        shape        = gears.shape.rounded_bar,
+    },
+    layout   = {
+        spacing = 10,
+        spacing_widget = {
+            {
+                forced_width = 5,
+                shape        = gears.shape.circle,
+                widget       = wibox.widget.separator
+            },
+            valign = 'center',
+            halign = 'center',
+            widget = wibox.container.place,
+        },
+        layout  = wibox.layout.flex.horizontal
+    },
+    -- Notice that there is *NO* wibox.wibox prefix, it is a template,
+    -- not a widget instance.
+    widget_template = {
+        {
+            {
+                {
+                    {
+                        id     = 'icon_role',
+                        widget = wibox.widget.imagebox,
+                    },
+                    margins = 2,
+                    widget  = wibox.container.margin,
+                },
+                {
+                    id     = 'text_role',
+                    widget = wibox.widget.textbox,
+                },
+                layout = wibox.layout.fixed.horizontal,
+            },
+            left  = 10,
+            right = 10,
+            widget = wibox.container.margin
+        },
+        id     = 'background_role',
+        widget = wibox.container.background,
+    },
+    } -- }}}
 
   -- s.mytasklist:buttons = awful.util.table.join(
   -- awful.button({}, 1, redflat.widget.tasklist.action.select),
@@ -413,7 +411,11 @@ function theme.at_screen_connect(s) -- {{{
             s.mypromptbox,
             spr,
         },
-        nil,
+        { -- Middle widgets
+            layout = wibox.layout.fixed.horizontal,
+            arrl_dl,
+            s.mytasklist,
+        },
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             arrl_ld,
@@ -454,7 +456,6 @@ function theme.at_screen_connect(s) -- {{{
             wibox.container.background(s.mylayoutbox, theme.bg_airline),
         },
     }
-    gears.timer.delayed_call(theme.vertical_wibox, s)
 end -- }}}
 
 return theme
